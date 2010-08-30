@@ -2,6 +2,7 @@
   :description "A clojure web service for generating LaTeX formulas."
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
-		 [net.sf.alxa/jlatexmath "0.9.1-SNAPSHOT"]]
+		 [net.sf.alxa/jlatexmath "0.9.1-SNAPSHOT"]
+		 [ring/ring "0.2.5"]]
   :dev-dependencies [[swank-clojure "1.3.0-SNAPSHOT"]]
   :repositories {"alxa-repo" "http://alxa.sourceforge.net/m2"})
