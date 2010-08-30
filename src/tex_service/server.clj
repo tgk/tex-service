@@ -1,19 +1,17 @@
 (ns tex-service.server
-  (:use ring.adapter.jetty)
+  (:use ring.adapter.jetty
+	clojure.pprint
+	hiccup.core)
   (:import java.awt.image.BufferedImage
 	   javax.imageio.ImageIO
 	   javax.swing.JLabel
+	   java.net.URLDecoder
 	   [java.awt Color Graphics2D]
 	   [java.io ByteArrayOutputStream ByteArrayInputStream]
 	   [org.scilab.forge.jlatexmath TeXFormula TeXIcon TeXConstants]))
 
-(defn hello-app [req]
-  {:status 200
-   :headers {"Content-Type" "text/html"}
-   :body "Hello cruel world."})
-
-(defn blue-app [req] 
-  (let [tex "\\frac{\\pi}{2}"
+(defn formula-app [req] 
+  (let [tex (URLDecoder/decode (.substring (:uri req) 1))
 	formula (TeXFormula. tex)
 	icon (.createTeXIcon formula TeXConstants/STYLE_DISPLAY 20)
 	img (BufferedImage. (.getIconWidth icon) (.getIconHeight icon) BufferedImage/TYPE_INT_ARGB)
@@ -27,7 +25,18 @@
      :headers {"Content-Type" "image/png"}
      :body (ByteArrayInputStream. (.toByteArray os))}))
 
+(defn ajax-madness-app [req]
+  (let [body (html [:img {:src "fooo"}])]
+    {:status 200
+     :headers {"Content-Type" "text/html"}
+     :body body}))
+
+(defn app [req]
+  (if (= "/" (:uri req))
+    (ajax-madness-app req)
+    (formula-app req)))
+
 (defn run-server []
-  (run-jetty (var blue-app) {:port 8080 :join? false}))
+  (run-jetty (var app) {:port 8080 :join? false}))
 
 
