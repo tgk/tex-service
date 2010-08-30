@@ -10,23 +10,34 @@
 	   [java.io ByteArrayOutputStream ByteArrayInputStream]
 	   [org.scilab.forge.jlatexmath TeXFormula TeXIcon TeXConstants]))
 
-(defn formula-app [req] 
-  (let [tex (URLDecoder/decode (.substring (:uri req) 1))
-	formula (TeXFormula. tex)
+(defn img-response [img]
+  "Renders a BufferedImage to a ring response"
+  (let [os (ByteArrayOutputStream.)
+	res (ImageIO/write img "png" os)
+	data (.toByteArray os)
+	is (ByteArrayInputStream. data)]
+    {:status 200
+     :headers {"Content-Type" "image/png"}
+     :body is}))
+
+(defn render-tex [tex]
+  "Render TeX formula (a String) to BufferedImage"
+  (let [formula (TeXFormula. tex)
 	icon (.createTeXIcon formula TeXConstants/STYLE_DISPLAY 20)
 	img (BufferedImage. (.getIconWidth icon) (.getIconHeight icon) BufferedImage/TYPE_INT_ARGB)
 	g2 (.createGraphics img)
-	os (ByteArrayOutputStream.)
 	label (JLabel.)]
     (.setForeground label (Color/BLACK))
     (.paintIcon icon label g2 0 0)
-    (ImageIO/write img "png" os)
-    {:status 200
-     :headers {"Content-Type" "image/png"}
-     :body (ByteArrayInputStream. (.toByteArray os))}))
+    img))
+
+(defn formula-app [req] 
+  (let [tex (URLDecoder/decode (.substring (:uri req) 1))
+	img (render-tex tex)]
+    (img-response img)))
 
 (defn ajax-madness-app [req]
-  (let [body (html [:img {:src "fooo"}])]
+  (let [body (html [:img {:src "%5Cfrac%7B%5Cpi%7D%7B2%7D"}])]
     {:status 200
      :headers {"Content-Type" "text/html"}
      :body body}))
