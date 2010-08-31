@@ -1,3 +1,4 @@
+; Copyright 2010 Kasper Langer and Thomas G. Kristensen
 (ns tex-service.server
   (:use ring.adapter.jetty
 	clojure.pprint
