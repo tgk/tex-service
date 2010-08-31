@@ -3,7 +3,8 @@
   (:use ring.adapter.jetty
 	clojure.pprint
 	hiccup.core
-	net.cgrand.moustache)
+	net.cgrand.moustache
+	ring.middleware.file)
   (:import java.awt.image.BufferedImage
 	   javax.imageio.ImageIO
 	   javax.swing.JLabel
@@ -25,7 +26,13 @@
 (defn html-response [body]
   {:status 200
    :headers {"Content-Type" "text/html"}
-   :body (html body)})
+   :body body})
+
+(defn layout [& body]
+  (html
+   [:html
+    [:head [:script {:src "/static/js/jquery-1.4.2.js"}]]
+    [:body body]]))
 
 (defn render-tex [tex]
   "Render TeX formula (a String) to BufferedImage"
@@ -44,11 +51,13 @@
     (img-response img)))
 
 (defn ajax-madness-app [req]
-  (html-response [:img {:src "tex/%5Cfrac%7B%5Cpi%7D%7B2%7D"}]))
+  (html-response (layout [:img {:src "tex/%5Cfrac%7B%5Cpi%7D%7B2%7D"}])))
 
 (def main-app
-     (app [] ajax-madness-app
-	  ["tex" &] formula-app))
+     (app
+      (wrap-file "public")
+      (app [] ajax-madness-app
+	   ["tex" &] formula-app)))
 
 (defn run-server []
   (run-jetty (var main-app) {:port 8080 :join? false}))
