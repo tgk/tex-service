@@ -11,4 +11,5 @@ Default port is 8080.
 
 ## License
 
+Distributed under the Eclipse Public License, the same as Clojure.
 Copyright (C) 2010 Kasper Langer and Thomas G. Kristensen
