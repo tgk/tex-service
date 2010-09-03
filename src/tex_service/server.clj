@@ -4,7 +4,7 @@
 	clojure.pprint
 	hiccup.core
 	net.cgrand.moustache
-	ring.middleware.file)
+	[ring.middleware file stacktrace reload])
   (:import java.awt.image.BufferedImage
 	   javax.imageio.ImageIO
 	   javax.swing.JLabel
@@ -56,6 +56,8 @@
 (def main-app
      (app
       (wrap-file "public")
+      (wrap-stacktrace)
+      (wrap-reload '(tex-service.server))
       (app [] ajax-madness-app
 	   ["tex" &] formula-app)))
 
