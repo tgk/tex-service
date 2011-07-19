@@ -8,7 +8,7 @@
   (:import java.awt.image.BufferedImage
 	   javax.imageio.ImageIO
 	   javax.swing.JLabel
-	   java.net.URLDecoder
+	   [java.net URLDecoder URLEncoder]
 	   [java.awt Color Graphics2D]
 	   [java.io ByteArrayOutputStream ByteArrayInputStream]
 	   [org.scilab.forge.jlatexmath TeXFormula TeXIcon TeXConstants]))
@@ -31,7 +31,8 @@
 (defn layout [& body]
   (html
    [:html
-    [:head [:script {:src "/static/js/jquery-1.4.2.js"}]]
+    [:title "TeX formula service"]
+    [:head [:link {:rel "stylesheet" :type "text/css" :href "/static/style.css"}]]
     [:body body]]))
 
 (defn render-tex [tex]
@@ -50,8 +51,27 @@
 	img (render-tex tex)]
     (img-response img)))
 
+(defn tex-example [tex-code]
+  (let [url (str "tex/" (URLEncoder/encode tex-code))]
+    (html
+     [:img {:src url}]
+     [:br]
+     [:a {:href url} [:code tex-code]]
+     [:br]
+     [:br])))
+
+(defn standard-response []
+ (html
+  [:h1 "TeX formula service"]
+  [:h2 "Examples"]
+  [:div
+    (tex-example "\\frac{\\pi}{2}")
+    (tex-example "\\sum_{i=1}^n i = \\frac{n(n-1)}{2}")]))
+
+
 (defn ajax-madness-app [req]
-  (html-response (layout [:img {:src "tex/%5Cfrac%7B%5Cpi%7D%7B2%7D"}])))
+  (html-response 
+    (layout (standard-response))))
 
 (def main-app
      (app

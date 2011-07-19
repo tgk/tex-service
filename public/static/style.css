@@ -1,0 +1,12 @@
+div {
+	margin-left: auto;
+	display: inline-block;
+	margin-right: auto;
+}
+
+img {
+	vertical-align: middle
+}
+body {
+	text-align:center;
+}
