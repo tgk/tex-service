@@ -64,4 +64,6 @@
 (defn run-server []
   (run-jetty (var main-app) {:port 8080 :join? false}))
 
-
+(defn -main []
+  (let [port (Integer/parseInt (System/getenv "PORT"))]
+    (run-jetty main-app {:port port})))

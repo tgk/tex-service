@@ -8,4 +8,5 @@
   :dev-dependencies [[swank-clojure "1.3.0-SNAPSHOT"]
 		     [lein-run "1.0.0-SNAPSHOT"]]
   :repositories {"alxa-repo" "http://alxa.sourceforge.net/m2"}
-  :run-aliases {:server [tex-service.server run-server]})
+  :run-aliases {:server [tex-service.server run-server]}
+  :main tex-service.server)
